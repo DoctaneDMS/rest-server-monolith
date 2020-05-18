@@ -1,0 +1,179 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+ 	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd" xmlns:aop="http://www.springframework.org/schema/aop">
+    
+    <context:annotation-config />
+
+    <!--- import config for H2 database type -->    
+    <import resource="classpath:com/softwareplumbers/dms/service/sql/h2db.xml" />
+    <import resource="classpath:com/softwareplumbers/dms/service/sql/entities.xml" />
+    <import resource="classpath:com/softwareplumbers/feed/service/sql/h2db.xml" />
+    <import resource="classpath:com/softwareplumbers/feed/service/sql/entities.xml" />
+  
+
+    <!--- configure datasource -->
+	<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.h2.Driver" />
+		<property name="url" value="jdbc:h2:file:/var/tmp/doctane/test" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
+	</bean> 
+    
+    <!--- configure filestore -->
+    <bean id="filestore" class="com.softwareplumbers.dms.service.sql.LocalFilesystem">
+        <property name="Path" value="/var/tmp/doctane/files"/> 
+    </bean>
+    
+    <bean id="dms.database" class="com.softwareplumbers.dms.service.sql.DocumentDatabase">
+        <constructor-arg index="0" ref="Schema"/>
+        <property name="operations" ref="dms.operations"/>
+        <property name="templates" ref="dms.templates"/>
+        <property name="createOption" value="RECREATE"/>
+    </bean>
+
+    <bean id="feed.database" class="com.softwareplumbers.feed.service.sql.MessageDatabase">
+        <constructor-arg index="0" ref="feed.Schema"/>
+        <constructor-arg index="1" ref="feed.operations"/>
+        <constructor-arg index="2" ref="feed.templates"/>
+        <property name="createOption" value="RECREATE"/>
+    </bean>
+             
+    <!--- configure base repository -->
+    <bean id="base" class="com.softwareplumbers.dms.service.sql.SQLRepositoryService" scope="singleton">
+        <property name="filestore" ref="filestore"/> 
+    </bean>
+
+    <!-- compose additional repository services, such as ZipFileHandler -->
+    <bean id="dms.tmp" class="com.softwareplumbers.dms.rest.server.model.PartHandlerService" scope="singleton">
+        <property name="baseRepository" ref="base"/>
+        <property name="handlers">
+            <array>
+                <bean class="com.softwareplumbers.dms.rest.server.model.ZipFileHandler"/>
+            </array>
+        </property>
+    </bean>
+
+    <!--- configure a feed service -->
+    <bean id="feed.tmp" class="com.softwareplumbers.feed.service.sql.SQLFeedService" scope="singleton">
+        <constructor-arg index="0" ref="feed.database"/>
+        <constructor-arg index="1" value="1000000"/>
+        <constructor-arg index="2" value="10000"/>
+    </bean>
+                                          
+    <bean id ="keymgr" class="com.softwareplumbers.keymanager.KeyManager" scope="singleton">
+        <constructor-arg index="0" value="/var/tmp/doctane-proxy.keystore"/>
+        <constructor-arg index="1" value="/var/tmp/certs"/>
+        <constructor-arg index="2" value="#{systemProperties['doctane.keystore.password']}"/>
+        <!-- for some reason specifying a value attribute here does not work -->
+        <constructor-arg index="3"><value>com.softwareplumbers.rest.server.core.SystemSecretKeys</value></constructor-arg>
+        <constructor-arg index="4"><value>com.softwareplumbers.rest.server.core.SystemKeyPairs</value></constructor-arg>
+    </bean>
+
+    
+    <bean id="dummyValidation" class="com.softwareplumbers.rest.server.core.DummyRequestValidationService" scope="singleton">
+        <constructor-arg index="0" value="tmp"/>
+    </bean>
+            
+    <bean id="auth.dummy" class="com.softwareplumbers.rest.server.model.AuthenticationService" scope="singleton">
+        <property name="RequestValidationService" ref="dummyValidation"/>
+        <property name="SignonService">
+            <bean class="com.softwareplumbers.rest.server.core.DummySignonService">
+                <constructor-arg index="0" ref="dummyValidation"/>
+            </bean>
+        </property>
+        <property name="SignedRequestValidationService" ref="signedRequestValidationService"/>
+    </bean>
+    
+    <bean id="signedRequestValidationService" class="com.softwareplumbers.rest.server.model.SignedRequestValidationService" scope="singleton">
+                <constructor-arg index="0" ref="keymgr"/>
+    </bean>
+    
+    <bean id="softwarePlumbersSAMLServer" class="com.softwareplumbers.rest.server.model.SAMLProtocolHandlerService" scope="singleton"/>
+
+    <bean id="cookieRequestValidationService" class="com.softwareplumbers.rest.server.core.CookieRequestValidationService">
+        <constructor-arg index="0" ref="keymgr"/>
+        <constructor-arg index="1" value="tmp"/>
+    </bean>
+                
+    <bean id="auth.tmp" class="com.softwareplumbers.rest.server.model.AuthenticationService" scope="singleton">
+        <property name="RequestValidationService" ref="cookieRequestValidationService"/>
+        <property name="SignedRequestValidationService" ref="signedRequestValidationService"/>
+        <property name="SignonService">
+            <bean class="com.softwareplumbers.rest.server.core.SAMLSignonService">
+                <property name="SAMLProtocolHandlerService" ref="softwarePlumbersSAMLServer"/>
+                <property name="assertionConsumerURI" value="http://localhost:8080/auth/tmp/saml"/>
+                <property name="issuerId" value="doctane-api-saml2"/>
+            </bean>
+        </property>
+        <property name="SAMLResponseHandlerService" ref="softwarePlumbersSAMLServer"/>
+    </bean>
+
+    <bean id="authz.public" class="com.softwareplumbers.authz.impl.PublicAuthorizationService" scope="singleton"/>
+
+    <bean id="RepositoryServiceFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+        <property name="serviceLocatorInterface" value="com.softwareplumbers.dms.rest.server.core.RepositoryServiceFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="tmp">dms.tmp</prop>
+                <prop key="dummy">dms.tmp</prop>
+            </props>
+        </property>
+    </bean>
+   
+    <bean id="FeedServiceFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+        <property name="serviceLocatorInterface" value="com.softwareplumbers.feed.rest.server.FeedServiceFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="tmp">feed.tmp</prop>
+                <prop key="dummy">feed.tmp</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="AuthenticationServiceFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+    	<property name="serviceLocatorInterface" value="com.softwareplumbers.rest.server.core.AuthenticationServiceFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="tmp">auth.tmp</prop>
+                <prop key="dummy">auth.dummy</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean primary="true" id="workspace.AuthorizationServiceFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+        <qualifier value="workspaceAuthorization"/>
+        <property name="serviceLocatorInterface" value="com.softwareplumbers.authz.AuthorizationServiceFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="tmp">authz.public</prop>
+                <prop key="dummy">authz.public</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="document.AuthorizationServiceFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+        <qualifier value="documentAuthorization"/>
+        <property name="serviceLocatorInterface" value="com.softwareplumbers.authz.AuthorizationServiceFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="tmp">authz.public</prop>
+                <prop key="dummy">authz.public</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="AuthorizationServiceFactory" class="com.softwareplumbers.dms.rest.server.model.RepositoryAuthorizationServiceFactory" />
+          
+</beans>
