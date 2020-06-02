@@ -35,14 +35,18 @@
         <constructor-arg index="0" ref="Schema"/>
         <property name="operations" ref="dms.operations"/>
         <property name="templates" ref="dms.templates"/>
-        <property name="createOption" value="RECREATE"/>
+        <!--
+        <property name="createOption" value="CREATE"/>
+        -->
     </bean>
 
     <bean id="feed.database" class="com.softwareplumbers.feed.service.sql.MessageDatabase">
         <constructor-arg index="0" ref="feed.Schema"/>
         <constructor-arg index="1" ref="feed.operations"/>
         <constructor-arg index="2" ref="feed.templates"/>
-        <property name="createOption" value="RECREATE"/>
+        <!--
+        <property name="createOption" value="CREATE"/>
+        -->
     </bean>
              
     <!--- configure base repository -->
