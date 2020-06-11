@@ -11,10 +11,10 @@ Monolithic Doctane server, built on top of the following modules:
 
 ## Architecture
 
-Although Doctane follows the microservices pattern and allows individual components to be separately 
+Although Doctane follows the micro-services pattern and allows individual components to be separately 
 deployed and scaled, sometimes it is convenient to have a single executable which encapsulates all
 the services required for a running system. This package provides a standalone java executable, 
-implemeted using Spring Boot, Jersey, and Jax-RS. The actual back ends are pluggable spring modules.
+implemented using Spring Boot, Jersey, and Jax-RS. The actual back ends are pluggable spring modules.
 
 Build support is provided using gradle, and CI via Gitlab's native gitlab-ci.yml
 
