@@ -148,7 +148,6 @@ configurations {
 configurations.all {
     // Check for updates to dependencies marked 'changing' every build
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-	exclude group: "commons-logging", module: "commons-logging"
 }
 
 dependencies {
@@ -158,27 +157,23 @@ dependencies {
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-processing', version: '2.25.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-multipart', version: '2.25.1'
     compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.1'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.1'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.2'
-    compile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.1'
-    compile group: 'com.softwareplumbers.oss', name: 'feed-interface-core', version: '0.0.2'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.3'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.5'
+    compile group: 'org.slf4j', name: 'slf4j-ext', version: '1.7.31-SNAPSHOT'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31-SNAPSHOT'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.5'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.10.5'
     runtime group: 'org.glassfish', name: 'javax.json', version: '1.1.2'
 
     defaultService group: 'org.springframework.boot', name:'spring-boot-starter-jdbc'
-    defaultService group: 'org.springframework.boot', name:'spring-boot-starter-logging'
     defaultService group: 'com.h2database', name: 'h2', version: '1.4.200'
     defaultService group: 'com.zaxxer', name: 'HikariCP', version: '3.4.2'
-    defaultService group: 'com.softwareplumbers.oss', name: 'fluent-statement', version: '0.0.10'
-    defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.2'
-    defaultService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.1'
+    defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.8'
+    defaultService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.2'
     
     testCompile group: 'org.springframework.boot', name:'spring-boot-starter-test'
-    testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.2.11', classifier: 'tests'
+    testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.2', classifier: 'tests'
+    testCompile group: 'com.softwareplumbers.oss', name:'feed-interface-core', version: '0.0.9', classifier: 'tests'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-client-spring', version: '0.9.1'
-    testCompile group: 'org.springframework.boot', name:'spring-boot-starter-test'
-    testCompile group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.1'
-    testCompile group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.2'
-    testCompile group: 'com.softwareplumbers.oss', name:'fluent-statement', version: '0.0.10'
+    testCompile group: 'com.softwareplumbers.oss', name:'feed-client-spring', version: '0.0.4'
 }

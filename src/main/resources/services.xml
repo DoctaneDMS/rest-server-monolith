@@ -19,12 +19,14 @@
   
 
     <!--- configure datasource -->
-	<bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="feed.datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url" value="jdbc:h2:file:/var/tmp/doctane/test" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean> 
+    
+    <alias alias="dms.datasource" name="feed.datasource"/>
     
     <!--- configure filestore -->
     <bean id="filestore" class="com.softwareplumbers.dms.service.sql.LocalFilesystem">
@@ -32,7 +34,7 @@
     </bean>
     
     <bean id="dms.database" class="com.softwareplumbers.dms.service.sql.DocumentDatabase">
-        <constructor-arg index="0" ref="Schema"/>
+        <constructor-arg index="0" ref="dms.schema"/>
         <property name="operations" ref="dms.operations"/>
         <property name="templates" ref="dms.templates"/>
         <!--
@@ -41,7 +43,7 @@
     </bean>
 
     <bean id="feed.database" class="com.softwareplumbers.feed.service.sql.MessageDatabase">
-        <constructor-arg index="0" ref="feed.Schema"/>
+        <constructor-arg index="0" ref="feed.schema"/>
         <constructor-arg index="1" ref="feed.operations"/>
         <constructor-arg index="2" ref="feed.templates"/>
         <!--
