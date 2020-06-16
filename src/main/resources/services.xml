@@ -181,5 +181,20 @@
     </bean>
 
     <bean id="AuthorizationServiceFactory" class="com.softwareplumbers.dms.rest.server.model.RepositoryAuthorizationServiceFactory" />
-          
+
+    <bean id="tmpManager" class="com.softwareplumbers.feed.service.sql.SQLFeedServiceMBean">
+        <constructor-arg index="0" ref="feed.tmp" />
+    </bean>
+    
+    <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
+        <property name="beans">
+            <map>
+                <entry key="bean:name=feed.service.tmp" value-ref="tmpManager"/>
+            </map>
+        </property>
+        <!---
+        <property name="server" ref="mbeanServer"/>
+        -->
+    </bean>
+                  
 </beans>
