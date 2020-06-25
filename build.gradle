@@ -156,9 +156,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-logging")
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-processing', version: '2.25.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-multipart', version: '2.25.1'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.1'
     compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.8'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.5'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.2'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.6'
     compile group: 'org.slf4j', name: 'slf4j-ext', version: '1.7.31-SNAPSHOT'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31-SNAPSHOT'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.5'
@@ -168,12 +168,11 @@ dependencies {
     defaultService group: 'org.springframework.boot', name:'spring-boot-starter-jdbc'
     defaultService group: 'com.h2database', name: 'h2', version: '1.4.200'
     defaultService group: 'com.zaxxer', name: 'HikariCP', version: '3.4.2'
-    defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.8'
     defaultService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.6'
-    
+    defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.11'
     testCompile group: 'org.springframework.boot', name:'spring-boot-starter-test'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.6', classifier: 'tests'
     testCompile group: 'com.softwareplumbers.oss', name:'feed-interface-core', version: '0.0.9', classifier: 'tests'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-client-spring', version: '0.9.3'
-    testCompile group: 'com.softwareplumbers.oss', name:'feed-client-spring', version: '0.0.4'
+    testCompile group: 'com.softwareplumbers.oss', name:'feed-client-spring', version: '0.0.5'
 }
