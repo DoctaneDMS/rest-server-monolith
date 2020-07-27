@@ -8,7 +8,8 @@ buildscript {
 }
 
 plugins {
-  id "org.jdrupes.mdoclet" version "1.0.5"
+  id "org.jdrupes.mdoclet" version "1.0.10"
+  id "com.github.ManifestClasspath" version "0.1.0-RELEASE"  
 }
 
 String propValue(String propName, String defValue) {
