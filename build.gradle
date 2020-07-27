@@ -34,16 +34,25 @@ springBoot {
 }
 
 bootRun {
-	systemProperties = System.properties
+    systemProperties = System.properties
     systemProperty "doctane.keystore.password", propValue("keystorePassword", "changeme")
     systemProperty "spring.profiles.active", "test"
+    systemProperty "local.files.dir", propValue("localFilesDir", "/var/tmp/doctane/files")
+    systemProperty "local.certs.dir", propValue("localCertsDir", "/var/tmp/doctane/certs")
+    systemProperty "local.keystore", propValue("localKeystore", "/var/tmp/doctane/doctane.keystore")
+    systemProperty "database.url", propValue("databaseUrl", "jdbc:h2:file://var/tmp/doctane/h2")
+    systemProperty "database.createOption", propValue("databaseCreateOption", "UPDATE")
     classpath = sourceSets.test.runtimeClasspath
 }
 
 test {
-	systemProperties = System.properties
+    systemProperties = System.properties
     systemProperty "doctane.keystore.password", propValue("keystorePassword", "changeme")
     systemProperty "spring.profiles.active", "test"
+    systemProperty "local.files.dir", propValue("localFilesDir", "/var/tmp/doctane/files")
+    systemProperty "local.certs.dir", propValue("localCertsDir", "/var/tmp/doctane/certs")
+    systemProperty "local.keystore", propValue("localKeystore", "/var/tmp/doctane/doctane.keystore")
+    systemProperty "database.createOption", propValue("databaseCreateOption", "UPDATE")
     systemProperty "spring.datasource.hikari.maximum-pool-size", 20
 	testLogging {
         events "passed", "skipped", "failed"
