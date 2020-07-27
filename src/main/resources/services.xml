@@ -65,6 +65,15 @@
             </array>
         </property>
     </bean>
+    
+    <!-- set up transformation services -->
+    <bean id="transformers" class="com.softwareplumbers.dms.rest.server.model.TransformerFactory" scope="singleton">
+        <constructor-arg>
+            <list>
+                <bean class="com.softwareplumbers.dms.rest.server.model.TikaXMLTransformer"/>
+            </list>
+        </constructor-arg>
+    </bean>    
 
     <!--- configure a feed service -->
     <bean id="feed.tmp" class="com.softwareplumbers.feed.service.sql.SQLFeedService" scope="singleton">
