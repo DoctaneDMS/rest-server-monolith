@@ -51,6 +51,7 @@ test {
     systemProperty "spring.profiles.active", "test"
     systemProperty "local.files.dir", propValue("localFilesDir", "/var/tmp/doctane/files")
     systemProperty "local.certs.dir", propValue("localCertsDir", "/var/tmp/doctane/certs")
+    systemProperty "database.url", propValue("databaseUrl", "jdbc:h2:file://var/tmp/doctane/h2")
     systemProperty "local.keystore", propValue("localKeystore", "/var/tmp/doctane/doctane.keystore")
     systemProperty "database.createOption", propValue("databaseCreateOption", "UPDATE")
     systemProperty "spring.datasource.hikari.maximum-pool-size", 20
@@ -166,7 +167,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-logging")
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-processing', version: '2.25.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-multipart', version: '2.25.1'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.12'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.13'
     compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.2'
     compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.6'
     compile group: 'org.slf4j', name: 'slf4j-ext', version: '1.7.31-SNAPSHOT'
@@ -178,8 +179,8 @@ dependencies {
     defaultService group: 'org.springframework.boot', name:'spring-boot-starter-jdbc'
     defaultService group: 'com.h2database', name: 'h2', version: '1.4.200'
     defaultService group: 'com.zaxxer', name: 'HikariCP', version: '3.4.2'
-    defaultService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.10'
-    defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.11'
+    defaultService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.11'
+    defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.12'
     defaultService group: 'com.softwareplumbers.oss', name:'transformer-service-swift', version: '0.0.2'
     testCompile group: 'org.springframework.boot', name:'spring-boot-starter-test'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.10', classifier: 'tests'
