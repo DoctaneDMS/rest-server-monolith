@@ -167,9 +167,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-logging")
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-processing', version: '2.25.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-multipart', version: '2.25.1'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.14'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.3'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.7'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.15'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.4'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.8'
     compile group: 'org.slf4j', name: 'slf4j-ext', version: '1.7.31-SNAPSHOT'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31-SNAPSHOT'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.5'
