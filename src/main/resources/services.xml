@@ -53,7 +53,7 @@
     </bean>
 
     <!-- compose additional repository services, such as ZipFileHandler -->
-    <bean id="dms.tmp" class="com.softwareplumbers.dms.rest.server.model.PartHandlerService" scope="singleton">
+    <bean id="dms.test" class="com.softwareplumbers.dms.rest.server.model.PartHandlerService" scope="singleton">
         <property name="baseRepository" ref="base"/>
         <property name="handlers">
             <array>
@@ -72,7 +72,7 @@
     </bean>    
 
     <!--- configure a feed service -->
-    <bean id="feed.tmp" class="com.softwareplumbers.feed.service.sql.SQLFeedService" scope="singleton">
+    <bean id="feed.test" class="com.softwareplumbers.feed.service.sql.SQLFeedService" scope="singleton">
         <constructor-arg index="0" ref="feed.database"/>
         <constructor-arg index="1" value="1000000"/>
         <constructor-arg index="2" value="10000"/>
@@ -89,7 +89,7 @@
 
     
     <bean id="dummyValidation" class="com.softwareplumbers.rest.server.core.DummyRequestValidationService" scope="singleton">
-        <constructor-arg index="0" value="tmp"/>
+        <constructor-arg index="0" value="test"/>
     </bean>
             
     <bean id="auth.dummy" class="com.softwareplumbers.rest.server.model.AuthenticationService" scope="singleton">
@@ -110,16 +110,16 @@
 
     <bean id="cookieRequestValidationService" class="com.softwareplumbers.rest.server.core.CookieRequestValidationService">
         <constructor-arg index="0" ref="keymgr"/>
-        <constructor-arg index="1" value="tmp"/>
+        <constructor-arg index="1" value="test"/>
     </bean>
                 
-    <bean id="auth.tmp" class="com.softwareplumbers.rest.server.model.AuthenticationService" scope="singleton">
+    <bean id="auth.test" class="com.softwareplumbers.rest.server.model.AuthenticationService" scope="singleton">
         <property name="RequestValidationService" ref="cookieRequestValidationService"/>
         <property name="SignedRequestValidationService" ref="signedRequestValidationService"/>
         <property name="SignonService">
             <bean class="com.softwareplumbers.rest.server.core.SAMLSignonService">
                 <property name="SAMLProtocolHandlerService" ref="softwarePlumbersSAMLServer"/>
-                <property name="assertionConsumerURI" value="http://localhost:8080/auth/tmp/saml"/>
+                <property name="assertionConsumerURI" value="http://localhost:8080/auth/test/saml"/>
                 <property name="issuerId" value="doctane-api-saml2"/>
             </bean>
         </property>
@@ -133,8 +133,8 @@
         <property name="serviceLocatorInterface" value="com.softwareplumbers.dms.rest.server.core.RepositoryServiceFactory"/>
         <property name="serviceMappings">
             <props>
-                <prop key="tmp">dms.tmp</prop>
-                <prop key="dummy">dms.tmp</prop>
+                <prop key="test">dms.test</prop>
+                <prop key="dummy">dms.test</prop>
             </props>
         </property>
     </bean>
@@ -144,8 +144,8 @@
         <property name="serviceLocatorInterface" value="com.softwareplumbers.feed.rest.server.FeedServiceFactory"/>
         <property name="serviceMappings">
             <props>
-                <prop key="tmp">feed.tmp</prop>
-                <prop key="dummy">feed.tmp</prop>
+                <prop key="test">feed.test</prop>
+                <prop key="dummy">feed.test</prop>
             </props>
         </property>
     </bean>
@@ -155,7 +155,7 @@
     	<property name="serviceLocatorInterface" value="com.softwareplumbers.rest.server.core.AuthenticationServiceFactory"/>
         <property name="serviceMappings">
             <props>
-                <prop key="tmp">auth.tmp</prop>
+                <prop key="test">auth.test</prop>
                 <prop key="dummy">auth.dummy</prop>
             </props>
         </property>
@@ -167,7 +167,7 @@
         <property name="serviceLocatorInterface" value="com.softwareplumbers.authz.AuthorizationServiceFactory"/>
         <property name="serviceMappings">
             <props>
-                <prop key="tmp">authz.public</prop>
+                <prop key="test">authz.public</prop>
                 <prop key="dummy">authz.public</prop>
             </props>
         </property>
@@ -179,7 +179,7 @@
         <property name="serviceLocatorInterface" value="com.softwareplumbers.authz.AuthorizationServiceFactory"/>
         <property name="serviceMappings">
             <props>
-                <prop key="tmp">authz.public</prop>
+                <prop key="test">authz.public</prop>
                 <prop key="dummy">authz.public</prop>
             </props>
         </property>
@@ -187,14 +187,14 @@
 
     <bean id="AuthorizationServiceFactory" class="com.softwareplumbers.dms.rest.server.model.RepositoryAuthorizationServiceFactory" />
 
-    <bean id="tmpManager" class="com.softwareplumbers.feed.service.sql.SQLFeedServiceMBean">
-        <constructor-arg index="0" ref="feed.tmp" />
+    <bean id="testManager" class="com.softwareplumbers.feed.service.sql.SQLFeedServiceMBean">
+        <constructor-arg index="0" ref="feed.test" />
     </bean>
     
     <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="beans">
             <map>
-                <entry key="bean:name=feed.service.tmp" value-ref="tmpManager"/>
+                <entry key="bean:name=feed.service.test" value-ref="testManager"/>
             </map>
         </property>
         <!---
