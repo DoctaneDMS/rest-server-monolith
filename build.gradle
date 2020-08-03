@@ -183,7 +183,7 @@ dependencies {
     defaultService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.12'
     defaultService group: 'com.softwareplumbers.oss', name:'transformer-service-swift', version: '0.0.2'
     testCompile group: 'org.springframework.boot', name:'spring-boot-starter-test'
-    testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.10', classifier: 'tests'
+    testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.11', classifier: 'tests'
     testCompile group: 'com.softwareplumbers.oss', name:'feed-interface-core', version: '0.0.9', classifier: 'tests'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-client-spring', version: '0.9.7'
     testCompile group: 'com.softwareplumbers.oss', name:'feed-client-spring', version: '0.0.6'
