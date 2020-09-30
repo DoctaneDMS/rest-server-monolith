@@ -11,45 +11,81 @@
     
     <context:annotation-config />
 
-    <!--- import config for H2 database type -->    
     <import resource="classpath:com/softwareplumbers/dms/service/sql/h2db.xml" />
+    <import resource="classpath:com/softwareplumbers/dms/service/sql/mysqldb.xml" />
     <import resource="classpath:com/softwareplumbers/dms/service/sql/entities.xml" />
     <import resource="classpath:com/softwareplumbers/feed/service/sql/h2db.xml" />
+    <import resource="classpath:com/softwareplumbers/feed/service/sql/mysqldb.xml" />
+    <import resource="classpath:com/softwareplumbers/feed/service/sql/oradb.xml" />
     <import resource="classpath:com/softwareplumbers/feed/service/sql/entities.xml" />
-  
-
-    <!--- configure datasource -->
-    <bean id="feed.datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-            <property name="driverClassName" value="org.h2.Driver" />
-            <property name="url" value="#{systemProperties['database.url']}" />
-            <property name="username" value="sa" />
-            <property name="password" value="" />
-    </bean> 
     
-    <alias alias="dms.datasource" name="feed.datasource"/>
+    <bean id="ResourcePath" class="com.softwareplumbers.common.resourcepath.ResourcePath">
+        <property name="locations">
+            <array>
+                <value>$spring.config.location</value>
+                <value>classpath:/config</value>
+            </array>
+        </property>
+    </bean>    
+    
+    <bean id="K8SEnvironment" class="com.softwareplumbers.common.k8senv.K8SEnvironment">
+        <property name="secretsPathParts">
+            <array>
+                <value>#{systemEnvironment['DOCTANE_INSTALLATION_ROOT']}</value>
+                <value>secrets</value>
+            </array>            
+        </property> 
+    </bean>   
+
+    <bean id="FeedDatabaseConfigFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+        <property name="serviceLocatorInterface" value="com.softwareplumbers.common.sql.DatabaseConfigFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="MYSQL">mysql.feed.config</prop>
+                <prop key="ORACLE">oracle.feed.config</prop>
+                <prop key="H2">h2.feed.config</prop>
+            </props>
+        </property>
+    </bean>    
+    
+    <bean id="DmsDatabaseConfigFactory"
+            class="org.springframework.beans.factory.config.ServiceLocatorFactoryBean">
+        <property name="serviceLocatorInterface" value="com.softwareplumbers.common.sql.DatabaseConfigFactory"/>
+        <property name="serviceMappings">
+            <props>
+                <prop key="MYSQL">mysql.dms.config</prop>
+                <prop key="H2">h2.dms.config</prop>
+            </props>
+        </property>
+    </bean>       
     
     <!--- configure filestore -->
     <bean id="filestore" class="com.softwareplumbers.dms.service.sql.LocalFilesystem">
-        <property name="Path" value="#{systemProperties['local.files.dir']}"/> 
+        <property name="PathParts">
+            <array>
+                <value>#{systemEnvironment['DOCTANE_INSTALLATION_ROOT']}</value>
+                <value>documents</value>
+            </array>
+        </property>
     </bean>
     
     <bean id="dms.database" class="com.softwareplumbers.dms.service.sql.DocumentDatabase">
-        <constructor-arg index="0" ref="dms.schema"/>
-        <property name="operations" ref="dms.operations"/>
-        <property name="templates" ref="dms.templates"/>
-        <property name="createOption" value="#{systemProperties['database.createOption']}"/>
+        <constructor-arg index="0" value="#{systemEnvironment['DOCTANE_DMS_DATABASE_URL']}"/>
+        <constructor-arg index="1">
+            <props>
+                <prop key="username">#{@K8SEnvironment.secrets['DMS_SCHEMA_USERNAME']?:systemEnvironment['DOCTANE_DMS_DATABASE_USER']}</prop>
+                <prop key="password">#{@K8SEnvironment.secrets['DMS_SCHEMA_PASSWORD']?:systemEnvironment['DOCTANE_DMS_DATABASE_PASSWORD']}</prop>
+            </props>
+        </constructor-arg>
+        <constructor-arg index="2" ref="DmsDatabaseConfigFactory"/>                
+        <constructor-arg index="3" value="#{systemEnvironment['DOCTANE_DMS_DATABASE_CREATE_OPTION']}"/>
     </bean>
-
-    <bean id="feed.database" class="com.softwareplumbers.feed.service.sql.MessageDatabase">
-        <constructor-arg index="0" ref="feed.schema"/>
-        <constructor-arg index="1" ref="feed.operations"/>
-        <constructor-arg index="2" ref="feed.templates"/>
-        <property name="createOption" value="#{systemProperties['database.createOption']}"/>
-    </bean>
-             
+            
     <!--- configure base repository -->
     <bean id="base" class="com.softwareplumbers.dms.service.sql.SQLRepositoryService" scope="singleton">
-        <property name="filestore" ref="filestore"/> 
+        <constructor-arg ref="dms.database"/>
+        <constructor-arg ref="filestore"/> 
     </bean>
 
     <!-- compose additional repository services, such as ZipFileHandler -->
@@ -73,18 +109,54 @@
 
     <!--- configure a feed service -->
     <bean id="feed.test" class="com.softwareplumbers.feed.service.sql.SQLFeedService" scope="singleton">
-        <constructor-arg index="0" ref="feed.database"/>
-        <constructor-arg index="1" value="1000000"/>
-        <constructor-arg index="2" value="10000"/>
+        <constructor-arg index="0" value="da7aa4a9-cb2d-4525-aa87-184f1ae1f642"/>
+        <constructor-arg index="1">
+            <bean class="com.softwareplumbers.feed.service.sql.MessageDatabase" scope="singleton">
+                <constructor-arg index="0" value="#{systemEnvironment['DOCTANE_FEED_DATABASE_URL']}"/>
+                <constructor-arg index="1">
+                    <props>
+                        <prop key="username">#{@K8SEnvironment.secrets['FEED_SCHEMA_USERNAME']?:systemEnvironment['DOCTANE_FEED_DATABASE_USER']}</prop>
+                        <prop key="password">#{@K8SEnvironment.secrets['FEED_SCHEMA_PASSWORD']?:systemEnvironment['DOCTANE_FEED_DATABASE_PASSWORD']}</prop>
+                    </props>
+                </constructor-arg>
+                <constructor-arg index="2" ref="FeedDatabaseConfigFactory"/>                
+                <constructor-arg index="3" value="#{systemEnvironment['DOCTANE_FEED_DATABASE_CREATE_OPTION']}"/>
+            </bean>
+        </constructor-arg>
     </bean>
+    
+    <bean id="hostResolver" class="com.softwareplumbers.feed.rest.server.DummyResolver"/>  
+    
+    <bean id="cluster" class="com.softwareplumbers.feed.impl.FilesystemCluster">
+        <constructor-arg index="0" type="int" value="4"/>
+        <constructor-arg index="1">
+            <array value-type="java.lang.String">
+                <value>#{systemEnvironment['DOCTANE_INSTALLATION_ROOT']}</value>
+                <value>cluster.json</value>
+            </array>            
+        </constructor-arg>
+        <constructor-arg index="2" value="http://localhost:8080"/>
+        <constructor-arg index="3" ref="hostResolver"/>
+    </bean>      
                                           
     <bean id ="keymgr" class="com.softwareplumbers.keymanager.KeyManager" scope="singleton">
-        <constructor-arg index="0" value="#{systemProperties['local.keystore']}"/>
-        <constructor-arg index="1" value="#{systemProperties['local.certs.dir']}"/>
-        <constructor-arg index="2" value="#{systemProperties['doctane.keystore.password']}"/>
-        <!-- for some reason specifying a value attribute here does not work -->
-        <constructor-arg index="3"><value>com.softwareplumbers.rest.server.core.SystemSecretKeys</value></constructor-arg>
-        <constructor-arg index="4"><value>com.softwareplumbers.rest.server.core.SystemKeyPairs</value></constructor-arg>
+        <property name="locationParts">
+            <array value-type="java.lang.String">
+                <value>#{systemEnvironment['DOCTANE_INSTALLATION_ROOT']}</value>
+                <value>pkix</value>
+                <value>doctane.keystore</value>
+            </array>
+        </property>
+        <property name="publishLocationParts">
+            <array value-type="java.lang.String">
+                <value>#{systemEnvironment['DOCTANE_INSTALLATION_ROOT']}</value>
+                <value>pkix</value>
+                <value>certs</value>
+            </array>                
+        </property>
+        <property name="password" value="#{@K8SEnvironment.secrets['DOCTANE_KEYSTORE_PASSWORD']?:systemEnvironment['DOCTANE_KEYSTORE_PASSWORD']}"/>
+        <property name="requiredSecretKeys" value="com.softwareplumbers.rest.server.core.SystemSecretKeys"/>
+        <property name="requiredKeyPairs" value="com.softwareplumbers.rest.server.core.SystemKeyPairs"/>        
     </bean>
 
     

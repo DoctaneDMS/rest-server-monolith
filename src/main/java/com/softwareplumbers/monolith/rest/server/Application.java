@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @ComponentScan({"com.softwareplumbers.dms.rest.server", "com.softwareplumbers.feed.rest.server", "com.softwareplumbers.rest.server", "com.softwareplumbers.monolith.rest.server"})
-@ImportResource("classpath:services.xml")
+@ImportResource("classpath:config/services.xml")
 public class Application extends SpringBootServletInitializer {
 
 	@Override

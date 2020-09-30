@@ -6,6 +6,7 @@ import com.softwareplumbers.dms.rest.server.core.Workspaces;
 import com.softwareplumbers.feed.rest.server.Converters;
 import com.softwareplumbers.feed.rest.server.FeedExceptionMapper;
 import com.softwareplumbers.feed.rest.server.Feeds;
+import com.softwareplumbers.feed.rest.server.Services;
 import com.softwareplumbers.rest.server.core.Heartbeat;
 import com.softwareplumbers.rest.server.core.CORSRequestFilter;
 import com.softwareplumbers.rest.server.core.CORSResponseFilter;
@@ -26,6 +27,7 @@ public class JerseyConfig extends ResourceConfig {
 		register(Documents.class);
 		register(Workspaces.class);
 		register(Catalogue.class);
+		register(Services.class);
 		register(Heartbeat.class);
 		register(Feeds.class);
 		register(Authentication.class);
