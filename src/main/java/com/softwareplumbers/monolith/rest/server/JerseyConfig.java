@@ -3,6 +3,7 @@ package com.softwareplumbers.monolith.rest.server;
 import com.softwareplumbers.dms.rest.server.core.Catalogue;
 import com.softwareplumbers.dms.rest.server.core.Documents;
 import com.softwareplumbers.dms.rest.server.core.RepositoryExceptionMappers.RepositoryExceptionMapper;
+import com.softwareplumbers.dms.rest.server.core.WorkspacePathParamProvider;
 import com.softwareplumbers.dms.rest.server.core.Workspaces;
 import com.softwareplumbers.feed.rest.server.Converters;
 import com.softwareplumbers.feed.rest.server.FeedExceptionMapper;
@@ -40,6 +41,7 @@ public class JerseyConfig extends ResourceConfig {
         register(FeedExceptionMapper.class);
         register(RepositoryExceptionMapper.class);
         register(Converters.class);
+        register(WorkspacePathParamProvider.class);        
 	}
 
 }
