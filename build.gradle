@@ -195,7 +195,7 @@ configurations.all {
     exclude group: "commons-logging", module: "commons-logging"
 }
 
-dependencies {
+dependencies { 
     compile("org.springframework.boot:spring-boot-starter-jersey")
     compile("org.springframework.boot:spring-boot-starter-tomcat")
     compile("org.springframework.boot:spring-boot-starter-logging")
