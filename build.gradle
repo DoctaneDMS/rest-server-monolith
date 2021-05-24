@@ -201,9 +201,9 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-logging")
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-processing', version: '2.25.1'
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-multipart', version: '2.25.1'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.50'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.12'
-    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.18'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-dms', version: '0.9.51'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-core', version: '0.5.13'
+    compile group: 'com.softwareplumbers.oss', name:'rest-server-feeds', version: '0.0.19'
     compile group: 'org.slf4j', name: 'slf4j-ext', version: '1.7.31-SNAPSHOT'
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31-SNAPSHOT'
     runtime group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.10.5'
@@ -212,13 +212,13 @@ dependencies {
 
     sqlService group: 'org.springframework.boot', name:'spring-boot-starter-jdbc'
     sqlService group: 'com.h2database', name: 'h2', version: '1.4.200'
-    sqlService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.40'
-    sqlService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.29'
-    sqlService group: 'com.softwareplumbers.oss', name:'transformer-service-swift', version: '0.0.2'
+    sqlService group: 'com.softwareplumbers.oss', name:'dms-service-sql', version: '0.9.41'
+    sqlService group: 'com.softwareplumbers.oss', name:'feed-service-sql', version: '0.0.30'
+    sqlService group: 'com.softwareplumbers.oss', name:'transformer-service-swift', version: '0.0.3'
     
     testCompile group: 'org.springframework.boot', name:'spring-boot-starter-test'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-interface-core', version: '0.9.39', classifier: 'tests'
-    testCompile group: 'com.softwareplumbers.oss', name:'feed-interface-core', version: '0.0.31', classifier: 'tests'
+    testCompile group: 'com.softwareplumbers.oss', name:'feed-interface-core', version: '0.0.32', classifier: 'tests'
     testCompile group: 'com.softwareplumbers.oss', name:'dms-client-spring', version: '0.9.19'
     testCompile group: 'com.softwareplumbers.oss', name:'feed-client-spring', version: '0.0.12'
 }
